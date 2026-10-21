@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Suppliers | Smart Inventory{% endblock %}
+
+{% block content %}
+<h1>Supplier Management</h1>
+
+<section class="panel">
+    <h2>Add Supplier</h2>
+    <form method="POST" class="form-grid">
+        <label>Supplier Name
+            <input name="name" required maxlength="100">
+        </label>
+        <label>Phone
+            <input name="phone" maxlength="30">
+        </label>
+        <label>Email
+            <input type="email" name="email" maxlength="120">
+        </label>
+        <label>Address
+            <input name="address" maxlength="250">
+        </label>
+        <button type="submit">Add Supplier</button>
+    </form>
+</section>
+
+<section class="panel">
+    <h2>Supplier List</h2>
+    {% if suppliers %}
+    <div class="table-wrap">
+    <table>
+        <tr>
+            <th>ID</th><th>Name</th><th>Phone</th>
+            <th>Email</th><th>Address</th>
+            <th>Products</th><th>Action</th>
+        </tr>
+        {% for s in suppliers %}
+        <tr>
+            <td>{{ s.id }}</td>
+            <td>{{ s.name }}</td>
+            <td>{{ s.phone or "-" }}</td>
+            <td>{{ s.email or "-" }}</td>
+            <td>{{ s.address or "-" }}</td>
+            <td>{{ s.product_count }}</td>
+            <td>
+                <form method="POST"
+                      action="{{ url_for('delete_supplier', supplier_id=s.id) }}"
+                      onsubmit="return confirm('Delete this supplier?')">
+                    <button class="danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+    {% else %}
+    <p>No suppliers added yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

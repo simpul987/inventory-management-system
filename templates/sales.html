@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Sales | Smart Inventory{% endblock %}
+
+{% block content %}
+<h1>Sales and Order Tracking</h1>
+
+<section class="panel">
+    <h2>Record a Sale</h2>
+
+    {% if products %}
+    <form method="POST" class="form-grid">
+        <label>Customer Name
+            <input name="customer_name" required maxlength="100">
+        </label>
+
+        <label>Product
+            <select name="product_id" id="product_id" required>
+                {% for p in products %}
+                <option value="{{ p.id }}"
+                        data-price="{{ p.price }}"
+                        data-stock="{{ p.quantity }}">
+                    {{ p.name }} — Rs. {{ "%.2f"|format(p.price) }}
+                    (Stock: {{ p.quantity }})
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>Quantity
+            <input type="number" name="quantity" id="quantity"
+                   min="1" value="1" required>
+        </label>
+
+        <div class="total-preview">
+            Estimated Total: Rs. <span id="total">0.00</span>
+        </div>
+
+        <button type="submit">Record Sale</button>
+    </form>
+    {% else %}
+    <p>No stock available. Add products or replenish inventory first.</p>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <h2>Order History</h2>
+    {% if sales %}
+    <div class="table-wrap">
+    <table>
+        <tr>
+            <th>Order ID</th><th>Customer</th>
+            <th>Date</th><th>Items</th><th>Total</th>
+        </tr>
+        {% for s in sales %}
+        <tr>
+            <td>{{ s.id }}</td>
+            <td>{{ s.customer_name }}</td>
+            <td>{{ s.sale_date }}</td>
+            <td>{{ s.items or "-" }}</td>
+            <td>Rs. {{ "%.2f"|format(s.total) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+    {% else %}
+    <p>No orders recorded yet.</p>
+    {% endif %}
+</section>
+
+<script>
+function updateTotal() {
+    const select = document.getElementById("product_id");
+    const quantity = document.getElementById("quantity");
+    const total = document.getElementById("total");
+
+    if (!select || !quantity || !total) return;
+
+    const option = select.options[select.selectedIndex];
+    const price = Number(option.dataset.price || 0);
+    const stock = Number(option.dataset.stock || 0);
+    const qty = Number(quantity.value || 0);
+
+    total.textContent = (price * qty).toFixed(2);
+    quantity.max = stock;
+    quantity.setCustomValidity(
+        qty > stock ? "Quantity exceeds available stock." : ""
+    );
+}
+
+document.getElementById("product_id")?.addEventListener(
+    "change", updateTotal
+);
+document.getElementById("quantity")?.addEventListener(
+    "input", updateTotal
+);
+updateTotal();
+</script>
+{% endblock %}

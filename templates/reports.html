@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Reports | Smart Inventory{% endblock %}
+
+{% block content %}
+<h1>SQL Analytics and Reports</h1>
+
+<section class="panel">
+    <h2>Total Revenue</h2>
+    <p class="revenue">Rs. {{ "%.2f"|format(revenue) }}</p>
+    <p class="muted">Total of all recorded sales.</p>
+</section>
+
+<section class="panel">
+    <h2>Best-Selling Products</h2>
+    {% if best_sellers %}
+    <div class="table-wrap">
+    <table>
+        <tr>
+            <th>Product</th><th>Units Sold</th><th>Sales Amount</th>
+        </tr>
+        {% for p in best_sellers %}
+        <tr>
+            <td>{{ p.product_name }}</td>
+            <td>{{ p.units_sold }}</td>
+            <td>Rs. {{ "%.2f"|format(p.sales_amount) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+    {% else %}
+    <p>No sales data available yet.</p>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <h2>Low-Stock Products (5 or Fewer Units)</h2>
+    {% if low_stock %}
+    <table>
+        <tr><th>Product</th><th>Category</th><th>Quantity</th></tr>
+        {% for p in low_stock %}
+        <tr>
+            <td>{{ p.name }}</td>
+            <td>{{ p.category }}</td>
+            <td><span class="warning">{{ p.quantity }}</span></td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No low-stock products.</p>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <h2>Stock by Category</h2>
+    {% if category_stock %}
+    <table>
+        <tr>
+            <th>Category</th><th>Different Products</th><th>Total Units</th>
+        </tr>
+        {% for c in category_stock %}
+        <tr>
+            <td>{{ c.category }}</td>
+            <td>{{ c.product_count }}</td>
+            <td>{{ c.units }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No inventory data available yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

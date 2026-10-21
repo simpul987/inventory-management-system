@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Smart Inventory{% endblock %}
+
+{% block content %}
+<h1>Dashboard</h1>
+<p class="muted">Overview of your inventory and sales.</p>
+
+<div class="stats">
+    <div class="stat">
+        <span>Total Products</span>
+        <h2>{{ stats.products }}</h2>
+    </div>
+    <div class="stat">
+        <span>Total Suppliers</span>
+        <h2>{{ stats.suppliers }}</h2>
+    </div>
+    <div class="stat">
+        <span>Available Units</span>
+        <h2>{{ stats.units }}</h2>
+    </div>
+    <div class="stat">
+        <span>Total Revenue</span>
+        <h2>Rs. {{ "%.2f"|format(stats.revenue) }}</h2>
+    </div>
+</div>
+
+<section class="panel">
+    <h2>Low Stock Alerts</h2>
+    {% if low_stock %}
+    <table>
+        <tr><th>Product</th><th>Category</th><th>Quantity</th></tr>
+        {% for p in low_stock %}
+        <tr>
+            <td>{{ p.name }}</td>
+            <td>{{ p.category }}</td>
+            <td><span class="warning">{{ p.quantity }}</span></td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No products currently have five or fewer units.</p>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <h2>Recent Sales</h2>
+    {% if recent_sales %}
+    <table>
+        <tr>
+            <th>Order ID</th><th>Customer</th>
+            <th>Date</th><th>Total</th>
+        </tr>
+        {% for sale in recent_sales %}
+        <tr>
+            <td>{{ sale.id }}</td>
+            <td>{{ sale.customer_name }}</td>
+            <td>{{ sale.sale_date }}</td>
+            <td>Rs. {{ "%.2f"|format(sale.total) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No sales recorded yet.</p>
+    {% endif %}
+</section>
+{% endblock %}
